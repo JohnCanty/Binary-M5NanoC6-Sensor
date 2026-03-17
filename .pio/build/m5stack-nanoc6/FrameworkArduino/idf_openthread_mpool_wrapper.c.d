@@ -1,0 +1,31 @@
+.pio/build/m5stack-nanoc6/FrameworkArduino/idf_openthread_mpool_wrapper.c.o: \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32/cores/esp32/idf_openthread_mpool_wrapper.c \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/soc/esp32c6/include/soc/soc_caps.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/qio_qspi/include/sdkconfig.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/newlib/platform_include/assert.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/heap/include/esp_heap_caps.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/heap/include/multi_heap.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/esp_common/include/esp_err.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/newlib/platform_include/stdio.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/esp_common/include/esp_compiler.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/esp_common/include/esp_attr.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/log/include/esp_log.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/esp_rom/include/esp_rom_sys.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/soc/esp32c6/include/soc/reset_reasons.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/log/include/esp_log_config.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/log/include/esp_log_level.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/esp_common/include/esp_assert.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/log/include/esp_log_color.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/log/include/esp_log_buffer.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/log/include/esp_log_timestamp.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/log/include/esp_log_write.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/log/include/esp_log_format.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/log/include/esp_log_args.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/esp_common/include/esp_macros.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/esp_common/include/esp_assert.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/log/include/esp_log_attr.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/log/include/esp_private/log_attr.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/openthread/openthread/include/openthread/instance.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/openthread/openthread/include/openthread/error.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/openthread/openthread/include/openthread/platform/toolchain.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/openthread/openthread/include/openthread/platform/messagepool.h

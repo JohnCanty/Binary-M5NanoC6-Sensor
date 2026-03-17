@@ -1,0 +1,36 @@
+.pio/build/m5stack-nanoc6/lib8cc/Hash/SHA3Builder.cpp.o: \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32/libraries/Hash/src/SHA3Builder.cpp \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-log.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/esp_timer/include/esp_timer.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/newlib/platform_include/stdio.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/esp_common/include/esp_err.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/esp_common/include/esp_compiler.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/esp_hw_support/include/esp_etm.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/esp_rom/esp32c6/include/esp32c6/rom/ets_sys.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/log/include/esp_log.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/esp_rom/include/esp_rom_sys.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/soc/esp32c6/include/soc/reset_reasons.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/soc/esp32c6/include/soc/soc_caps.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/log/include/esp_log_config.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/log/include/esp_log_level.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/esp_common/include/esp_assert.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/log/include/esp_log_color.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/log/include/esp_log_buffer.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/log/include/esp_log_timestamp.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/log/include/esp_log_write.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/log/include/esp_log_format.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/log/include/esp_log_args.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/esp_common/include/esp_macros.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/esp_common/include/esp_assert.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/log/include/esp_log_attr.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/esp_common/include/esp_attr.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/log/include/esp_private/log_attr.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32/libraries/Hash/src/SHA3Builder.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32/cores/esp32/WString.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32/cores/esp32/pgmspace.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32/cores/esp32/Stream.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32/cores/esp32/Print.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32/cores/esp32/WString.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32/cores/esp32/Printable.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32/cores/esp32/HashBuilder.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32/cores/esp32/HEXBuilder.h
