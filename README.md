@@ -10,8 +10,10 @@ Firmware for a single binary sensor input that publishes state to MQTT and provi
   - Wi-Fi SSID/password
   - MQTT server
   - Device name
+  - DHCP hostname (also used as MQTT client ID)
   - Topic prefix
   - Optional subscribe topic/value for NeoPixel toggle
+  - Optional reverse sensing logic (treat HIGH as active)
 - First-boot SoftAP provisioning when Wi-Fi credentials are missing
 - NVS persistence for Wi-Fi and MQTT settings
 - Wi-Fi and MQTT reconnect logic with staged recovery
@@ -56,6 +58,8 @@ The firmware publishes:
 
 If no Wi-Fi credentials are saved, the device starts a SoftAP and serves the setup page.
 
+After the device is fully booted, hold the device button for 10 seconds to enter setup mode.
+
 Current AP SSID:
 
 - `Sensor-setup`
@@ -81,9 +85,11 @@ The setup page supports:
   - Leave blank to keep existing password if SSID is unchanged
 - `MQTT Server`
 - `Device`
+- `DHCP Hostname / MQTT Client ID`
 - `Topic Prefix`
 - `Subscribe Topic (optional)`
 - `Toggle Value (optional)`
+- `Reverse sensing logic`
 
 ### Optional subscribe/toggle behavior
 

@@ -58,12 +58,14 @@ String deviceName = "BinarySensor"; // Used in topic: <topicPrefix><deviceName>/
 String topicPrefix = "BinarySensors/";
 String subscribeTopic = "";
 String subscribeValue = "";
+bool reverseSensingLogic = false;
 String dhcpHostname;
 String setupApSsid;
 bool webServerStarted = false;
 bool webRoutesConfigured = false;
 bool neoPixelToggleState = false;
 bool provisioningApMode = false;
+bool setupLongPressHandled = false;
 
 // Shared topic buffer for short MQTT topic composition.
 char topic_buffer[BUFFER_SIZE];
@@ -73,7 +75,7 @@ char topic_buffer[BUFFER_SIZE];
 const int contactPin = 1;
 volatile int lastContactState = HIGH;
 volatile bool stateChanged = false;
-volatile int currentContactState = HIGH; // HIGH=inactive, LOW=active for active-low wiring.
+volatile int currentContactState = HIGH; // Logical active state is configurable.
 volatile unsigned long lastInterruptTime = 0;
 
 int wifiRetryCount = 0;
@@ -89,6 +91,7 @@ const unsigned long WIFI_CHECK_INTERVAL = 30000;  // Check WiFi every 30 seconds
 const unsigned long WIFI_RECONNECT_INTERVAL = 5000; // Wait 5 seconds between reconnect attempts
 const unsigned long WIFI_HARD_RESET_INTERVAL = 120000; // Re-init WiFi stack after 2 min down
 const unsigned long MQTT_RECONNECT_INTERVAL = 3000; // MQTT retry every 3 seconds
+const unsigned long SETUP_BUTTON_HOLD_MS = 10000; // Hold button 10s after boot to enter setup mode
 
 // Forward declarations
 void handleContactChange();
@@ -106,14 +109,17 @@ bool provisionWiFiCredentials();
 bool loadMqttSettings();
 bool saveMqttSettings(const String& mqttServerValue, const String& mqttDeviceName,
                       const String& topicPrefixValue, const String& subscribeTopicValue,
-                      const String& subscribeValueValue);
+                      const String& subscribeValueValue, const String& dhcpHostnameValue,
+                      bool reverseSensing);
 void configureMqttClient();
 void configureWebRoutes();
 void startWebServer();
 void stopWebServer();
 void handleConfigPage();
 void handleSaveConfig();
+bool isSensorActive(int state);
 String buildDhcpHostname();
+String normalizeDhcpHostname(const String& hostname);
 String normalizeTopicPrefix(const String& prefix);
 String htmlEscape(const String& value);
 void startSoftAPProvisioning();
@@ -174,6 +180,9 @@ void setup() {
     
     // Attach interrupt to the contactPin
     attachInterrupt(digitalPinToInterrupt(contactPin), handleContactChange, CHANGE);
+
+    // Capture actual sensor state before the first publish.
+    currentContactState = digitalRead(contactPin);
     
     // Send initial state
     publishState(currentContactState);
@@ -306,9 +315,11 @@ void reConnect() {
         
         Serial.println("Attempting MQTT connection...");
         
-        // Create a random client ID
-        String clientId = "M5Stack-";
-        clientId += String(random(0xffff), HEX);
+        // Keep MQTT client ID aligned with configured DHCP hostname.
+        String clientId = dhcpHostname;
+        if (clientId.length() == 0) {
+            clientId = buildDhcpHostname();
+        }
 
         // Build the Last Will and Testament topic
         buildTopic(topic_buffer, deviceName, "LWT");
@@ -356,8 +367,8 @@ void buildTopic(char* buffer, const String& mqttDeviceName, const char* suffix) 
 void publishState(int state) {
     buildTopic(topic_buffer, deviceName, "DETECT");
     
-    if (state == LOW) {
-        // Active state (LOW for active-low wiring).
+    if (isSensorActive(state)) {
+        // Active state (LOW by default, HIGH when reverse logic is enabled).
         client.publish(topic_buffer, "OFF");
         strip.setPixelColor(0, strip.Color(255, 0, 0)); // RED for alert
         strip.show();
@@ -368,6 +379,17 @@ void publishState(int state) {
         strip.setPixelColor(0, strip.Color(0, 255, 0)); // GREEN for normal
         strip.show();
     }
+}
+
+/**
+ * @brief Convert raw GPIO level to logical active/inactive state.
+ */
+bool isSensorActive(int state) {
+    bool active = (state == LOW);
+    if (reverseSensingLogic) {
+        active = !active;
+    }
+    return active;
 }
 
 /**
@@ -480,6 +502,11 @@ bool loadMqttSettings() {
     topicPrefix = normalizeTopicPrefix(prefs.getString("prefix", topicPrefix));
     subscribeTopic = prefs.getString("subTopic", subscribeTopic);
     subscribeValue = prefs.getString("subValue", subscribeValue);
+    dhcpHostname = normalizeDhcpHostname(prefs.getString("dhcpHost", dhcpHostname));
+    if (dhcpHostname.length() == 0) {
+        dhcpHostname = buildDhcpHostname();
+    }
+    reverseSensingLogic = prefs.getBool("reverseSense", reverseSensingLogic);
     subscribeTopic.trim();
     subscribeValue.trim();
     prefs.end();
@@ -498,13 +525,16 @@ bool loadMqttSettings() {
  */
 bool saveMqttSettings(const String& mqttServerValue, const String& mqttDeviceName,
                       const String& topicPrefixValue, const String& subscribeTopicValue,
-                      const String& subscribeValueValue) {
+                      const String& subscribeValueValue, const String& dhcpHostnameValue,
+                      bool reverseSensing) {
     String normalizedPrefix = normalizeTopicPrefix(topicPrefixValue);
     String normalizedSubTopic = subscribeTopicValue;
     String normalizedSubValue = subscribeValueValue;
+    String normalizedDhcpHostname = normalizeDhcpHostname(dhcpHostnameValue);
     normalizedSubTopic.trim();
     normalizedSubValue.trim();
-    if (mqttServerValue.length() == 0 || mqttDeviceName.length() == 0 || normalizedPrefix.length() == 0) {
+    if (mqttServerValue.length() == 0 || mqttDeviceName.length() == 0 || normalizedPrefix.length() == 0 ||
+        normalizedDhcpHostname.length() == 0) {
         return false;
     }
 
@@ -514,15 +544,21 @@ bool saveMqttSettings(const String& mqttServerValue, const String& mqttDeviceNam
     prefs.putString("prefix", normalizedPrefix);
     prefs.putString("subTopic", normalizedSubTopic);
     prefs.putString("subValue", normalizedSubValue);
+    prefs.putString("dhcpHost", normalizedDhcpHostname);
+    prefs.putBool("reverseSense", reverseSensing);
     String verifyServer = prefs.getString("server", "");
     String verifyDevice = prefs.getString("device", "");
     String verifyPrefix = prefs.getString("prefix", "");
     String verifySubTopic = prefs.getString("subTopic", "");
     String verifySubValue = prefs.getString("subValue", "");
+    String verifyDhcpHostname = prefs.getString("dhcpHost", "");
+    bool verifyReverseSense = prefs.getBool("reverseSense", false);
     prefs.end();
 
     if (verifyServer != mqttServerValue || verifyDevice != mqttDeviceName || verifyPrefix != normalizedPrefix ||
-        verifySubTopic != normalizedSubTopic || verifySubValue != normalizedSubValue) {
+        verifySubTopic != normalizedSubTopic || verifySubValue != normalizedSubValue ||
+        verifyDhcpHostname != normalizedDhcpHostname ||
+        verifyReverseSense != reverseSensing) {
         return false;
     }
 
@@ -531,6 +567,8 @@ bool saveMqttSettings(const String& mqttServerValue, const String& mqttDeviceNam
     topicPrefix = normalizedPrefix;
     subscribeTopic = normalizedSubTopic;
     subscribeValue = normalizedSubValue;
+    dhcpHostname = normalizedDhcpHostname;
+    reverseSensingLogic = reverseSensing;
     Serial.println("MQTT settings saved to secure storage");
     return true;
 }
@@ -623,12 +661,19 @@ void handleConfigPage() {
     page += "<input id='mqtt_server' name='mqtt_server' value='" + htmlEscape(mqttServer) + "' required>";
     page += "<label for='device_name'>Device</label>";
     page += "<input id='device_name' name='device_name' value='" + htmlEscape(deviceName) + "' required>";
+    page += "<label for='dhcp_hostname'>DHCP Hostname / MQTT Client ID</label>";
+    page += "<input id='dhcp_hostname' name='dhcp_hostname' value='" + htmlEscape(dhcpHostname) + "' required>";
     page += "<label for='topic_prefix'>Topic Prefix</label>";
     page += "<input id='topic_prefix' name='topic_prefix' value='" + htmlEscape(topicPrefix) + "' required>";
     page += "<label for='subscribe_topic'>Subscribe Topic (optional)</label>";
     page += "<input id='subscribe_topic' name='subscribe_topic' value='" + htmlEscape(subscribeTopic) + "' placeholder='Example: BinarySensors/commands'>";
     page += "<label for='subscribe_value'>Toggle Value (optional)</label>";
     page += "<input id='subscribe_value' name='subscribe_value' value='" + htmlEscape(subscribeValue) + "' placeholder='Example: TOGGLE'>";
+    page += "<label><input id='reverse_sensing' name='reverse_sensing' type='checkbox' value='1'";
+    if (reverseSensingLogic) {
+        page += " checked";
+    }
+    page += "> Reverse sensing logic (treat HIGH as active)</label>";
     page += "<button type='submit'>Save Configuration</button></form>";
     page += "</div></div></body></html>";
     webServer.send(200, "text/html", page);
@@ -639,20 +684,24 @@ void handleConfigPage() {
  *
  * Side effects:
  * - Saves Wi-Fi/MQTT settings to NVS.
+ * - Saves DHCP hostname used for Wi-Fi hostname and MQTT client ID.
  * - Reconfigures MQTT connection.
- * - Reconnects Wi-Fi when credentials changed.
+ * - Reconnects Wi-Fi when credentials or hostname changed.
  */
 void handleSaveConfig() {
     String newWifiSsid = webServer.arg("wifi_ssid");
     String newWifiPassword = webServer.arg("wifi_password");
     String newMqttServer = webServer.arg("mqtt_server");
     String newDeviceName = webServer.arg("device_name");
+     String newDhcpHostname = webServer.arg("dhcp_hostname");
     String newTopicPrefix = webServer.arg("topic_prefix");
     String newSubscribeTopic = webServer.arg("subscribe_topic");
     String newSubscribeValue = webServer.arg("subscribe_value");
+    bool newReverseSensing = webServer.hasArg("reverse_sensing");
     newWifiSsid.trim();
     newMqttServer.trim();
     newDeviceName.trim();
+    newDhcpHostname.trim();
     newTopicPrefix.trim();
     newSubscribeTopic.trim();
     newSubscribeValue.trim();
@@ -666,14 +715,22 @@ void handleSaveConfig() {
         newWifiPassword = wifiPassword;
     }
 
+    String normalizedDhcpHostname = normalizeDhcpHostname(newDhcpHostname);
+    if (normalizedDhcpHostname.length() == 0) {
+        webServer.send(400, "text/plain", "DHCP hostname is invalid");
+        return;
+    }
+
     bool wifiChanged = (newWifiSsid != wifiSsid) || (newWifiPassword != wifiPassword);
+    bool hostnameChanged = (normalizedDhcpHostname != dhcpHostname);
     if (wifiChanged && !saveWiFiCredentials(newWifiSsid, newWifiPassword)) {
         webServer.send(400, "text/plain", "Invalid WiFi configuration");
         return;
     }
 
     if (!saveMqttSettings(newMqttServer, newDeviceName, newTopicPrefix,
-                          newSubscribeTopic, newSubscribeValue)) {
+                          newSubscribeTopic, newSubscribeValue,
+                          normalizedDhcpHostname, newReverseSensing)) {
         webServer.send(400, "text/plain", "Invalid MQTT configuration");
         return;
     }
@@ -689,7 +746,7 @@ void handleSaveConfig() {
     response += "</body></html>";
     webServer.send(200, "text/html", response);
 
-    if (wifiChanged) {
+    if (wifiChanged || hostnameChanged) {
         delay(150);
         provisioningApMode = false;
         WiFi.disconnect();
@@ -708,8 +765,50 @@ void handleSaveConfig() {
 String buildDhcpHostname() {
     uint64_t mac = ESP.getEfuseMac();
     char buffer[32];
-    snprintf(buffer, sizeof(buffer), "binary-sensor-%06llX", (mac & 0xFFFFFFULL));
+    snprintf(buffer, sizeof(buffer), "binary-sensor-%06llx", (mac & 0xFFFFFFULL));
     return String(buffer);
+}
+
+/**
+ * @brief Normalize DHCP hostname for Wi-Fi and MQTT client ID usage.
+ */
+String normalizeDhcpHostname(const String& hostname) {
+    String normalized = hostname;
+    normalized.trim();
+    normalized.toLowerCase();
+
+    String cleaned;
+    cleaned.reserve(normalized.length());
+    bool lastWasDash = false;
+
+    for (size_t i = 0; i < normalized.length(); ++i) {
+        char c = normalized.charAt(i);
+        bool isAlphaNum = (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9');
+        bool shouldDash = (c == '-') || (c == '_') || (c == ' ') || (c == '.');
+
+        if (isAlphaNum) {
+            cleaned += c;
+            lastWasDash = false;
+        } else if (shouldDash) {
+            if (!lastWasDash && cleaned.length() > 0) {
+                cleaned += '-';
+                lastWasDash = true;
+            }
+        }
+    }
+
+    while (cleaned.startsWith("-")) {
+        cleaned.remove(0, 1);
+    }
+    while (cleaned.endsWith("-")) {
+        cleaned.remove(cleaned.length() - 1, 1);
+    }
+
+    if (cleaned.length() > 63) {
+        cleaned.remove(63);
+    }
+
+    return cleaned;
 }
 
 /**
@@ -883,6 +982,25 @@ bool provisionWiFiCredentials() {
 void loop() {
     NanoC6.update();
 
+    if (!provisioningApMode) {
+        if (!setupLongPressHandled && NanoC6.BtnA.pressedFor(SETUP_BUTTON_HOLD_MS)) {
+            setupLongPressHandled = true;
+            Serial.println("Setup button held for 10s - entering setup mode");
+
+            if (client.connected()) {
+                client.disconnect();
+            }
+
+            WiFi.disconnect();
+            delay(50);
+            startSoftAPProvisioning();
+        }
+
+        if (NanoC6.BtnA.wasReleased()) {
+            setupLongPressHandled = false;
+        }
+    }
+
     if (webServerStarted) {
         webServer.handleClient();
     }
@@ -910,7 +1028,7 @@ void loop() {
     }
     
     // Turn off alert LED after 5 seconds
-    if (currentContactState == LOW) {
+    if (isSensorActive(currentContactState)) {
         unsigned long currentMillis = millis();
         if (currentMillis - lastPublishMillis > 5000) {
             strip.setPixelColor(0, strip.Color(0, 0, 0)); // Turn off
