@@ -2,7 +2,6 @@
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-i2c-slave.c \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/soc/esp32c6/include/soc/soc_caps.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/newlib/platform_include/stdio.h \
- /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/qio_qspi/include/sdkconfig.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/esp_common/include/esp_attr.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/esp_rom/esp32c6/include/esp32c6/rom/gpio.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/soc/esp32c6/register/soc/gpio_reg.h \

@@ -2,7 +2,6 @@
  .pio/libdeps/m5stack-nanoc6/Adafruit\ NeoPixel/esp.c \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32/cores/esp32/Arduino.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/newlib/platform_include/stdio.h \
- /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/qio_qspi/include/sdkconfig.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp_arduino_version.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/freertos/FreeRTOS-Kernel/include/freertos/FreeRTOS.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/freertos/config/include/freertos/FreeRTOSConfig.h \

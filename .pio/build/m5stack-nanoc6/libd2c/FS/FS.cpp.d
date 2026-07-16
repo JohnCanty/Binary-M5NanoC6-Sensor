@@ -121,6 +121,7 @@
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/lwip/lwip/src/include/lwip/ip_addr.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/lwip/lwip/src/include/lwip/opt.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/lwip/port/include/lwipopts.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/newlib/platform_include/sys/fcntl.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/newlib/platform_include/sys/ioctl.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/newlib/platform_include/sys/poll.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/esp_system/include/esp_task.h \

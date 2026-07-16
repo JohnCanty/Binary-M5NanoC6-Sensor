@@ -5,7 +5,6 @@
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/esp_event/include/esp_event_base.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/esp_common/include/esp_err.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/newlib/platform_include/stdio.h \
- /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/qio_qspi/include/sdkconfig.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/esp_common/include/esp_compiler.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/esp_netif/include/esp_netif_ip_addr.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/esp_event/include/esp_event.h \
@@ -118,6 +117,7 @@
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-cpu.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-hosted.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32/cores/esp32/WCharacter.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/newlib/platform_include/ctype.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32/cores/esp32/WString.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32/cores/esp32/pgmspace.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32/cores/esp32/Stream.h \
@@ -127,6 +127,7 @@
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/lwip/lwip/src/include/lwip/ip_addr.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/lwip/lwip/src/include/lwip/opt.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/lwip/port/include/lwipopts.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/newlib/platform_include/sys/fcntl.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/newlib/platform_include/sys/ioctl.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/newlib/platform_include/sys/poll.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/esp_system/include/esp_task.h \

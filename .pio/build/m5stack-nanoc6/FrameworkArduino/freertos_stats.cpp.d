@@ -3,9 +3,9 @@
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32/cores/esp32/freertos_stats.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32/cores/esp32/Print.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/newlib/platform_include/stdio.h \
- /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/qio_qspi/include/sdkconfig.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32/cores/esp32/WString.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32/cores/esp32/pgmspace.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/newlib/platform_include/ctype.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32/cores/esp32/Printable.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/freertos/FreeRTOS-Kernel/include/freertos/FreeRTOS.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/freertos/config/include/freertos/FreeRTOSConfig.h \

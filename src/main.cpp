@@ -85,12 +85,15 @@ unsigned long lastPublishMillis = 0;
 unsigned long lastWiFiReconnectAttempt = 0;
 unsigned long lastMqttReconnectAttempt = 0;
 unsigned long lastWiFiGoodMillis = 0;
+unsigned long dualOutageStartMillis = 0;
 unsigned long bootMillis = 0;
 bool wifiHasEverConnected = false;
 const unsigned long WIFI_CHECK_INTERVAL = 30000;  // Check WiFi every 30 seconds
 const unsigned long WIFI_RECONNECT_INTERVAL = 5000; // Wait 5 seconds between reconnect attempts
 const unsigned long WIFI_HARD_RESET_INTERVAL = 120000; // Re-init WiFi stack after 2 min down
 const unsigned long MQTT_RECONNECT_INTERVAL = 3000; // MQTT retry every 3 seconds
+const unsigned long INITIAL_MQTT_TIMEOUT_MS = 30000; // Startup MQTT verification window
+const unsigned long DUAL_OUTAGE_REBOOT_TIMEOUT_MS = 60000; // Reboot when both WiFi+MQTT are down for 60s
 const unsigned long SETUP_BUTTON_HOLD_MS = 10000; // Hold button 10s after boot to enter setup mode
 
 // Forward declarations
@@ -103,6 +106,9 @@ void publishState(int state);
 void scheduleDailyReboot();
 void checkWiFiConnection();
 void wifiEventHandler(WiFiEvent_t event, WiFiEventInfo_t info);
+bool waitForInitialMqttConnection(unsigned long timeoutMs);
+void flashStatusWarningYellow();
+void monitorCriticalConnectivity();
 bool loadWiFiCredentials();
 bool saveWiFiCredentials(const String& ssid, const String& passwordValue);
 bool provisionWiFiCredentials();
@@ -177,6 +183,14 @@ void setup() {
     // Set MQTT keep-alive and socket timeout
     client.setKeepAlive(30);
     client.setSocketTimeout(10);  // 10 second socket timeout
+
+    if (WiFi.status() == WL_CONNECTED) {
+        bool mqttReady = waitForInitialMqttConnection(INITIAL_MQTT_TIMEOUT_MS);
+        if (!mqttReady) {
+            Serial.println("Startup MQTT check timed out - will continue retrying in loop");
+            flashStatusWarningYellow();
+        }
+    }
     
     // Attach interrupt to the contactPin
     attachInterrupt(digitalPinToInterrupt(contactPin), handleContactChange, CHANGE);
@@ -296,11 +310,9 @@ void callback(char* topic, byte* payload, unsigned int length) {
  * - Resubscribes optional command topic.
  */
 void reConnect() {
-    // Handle WiFi disconnection
+    // Only handle MQTT when WiFi is connected.
     if (WiFi.status() != WL_CONNECTED) {
-        Serial.println("WiFi disconnected, attempting to reconnect...");
-        WiFi.reconnect();  // Ask WiFi stack to reconnect
-        return;  // Exit early, let WiFi auto-reconnect handle it
+        return;
     }
     
     // Only attempt MQTT connection if WiFi is connected
@@ -338,15 +350,78 @@ void reConnect() {
         } else {
             Serial.print("MQTT connection failed, rc=");
             Serial.println(client.state());
+            flashStatusWarningYellow();
             wifiRetryCount++;
-            
-            // Only restart after MANY failed attempts (not just 3)
-            if (wifiRetryCount > 10) {
-                Serial.println("Too many MQTT failures, restarting device...");
-                delay(1000);
-                ESP.restart();
-            }
         }
+    }
+}
+
+/**
+ * @brief Wait for MQTT connectivity during startup for a bounded time window.
+ */
+bool waitForInitialMqttConnection(unsigned long timeoutMs) {
+    unsigned long start = millis();
+    lastMqttReconnectAttempt = 0;
+
+    while (millis() - start < timeoutMs) {
+        if (WiFi.status() != WL_CONNECTED) {
+            return false;
+        }
+
+        if (client.connected()) {
+            return true;
+        }
+
+        reConnect();
+
+        if (webServerStarted) {
+            webServer.handleClient();
+        }
+
+        delay(100);
+    }
+
+    return client.connected();
+}
+
+/**
+ * @brief Brief yellow flash to indicate MQTT reachability issues.
+ */
+void flashStatusWarningYellow() {
+    uint32_t previous = strip.getPixelColor(0);
+    strip.setPixelColor(0, strip.Color(255, 170, 0));
+    strip.show();
+    delay(90);
+    strip.setPixelColor(0, previous);
+    strip.show();
+}
+
+/**
+ * @brief Reboot if both Wi-Fi and MQTT stay down for too long.
+ */
+void monitorCriticalConnectivity() {
+    if (provisioningApMode) {
+        dualOutageStartMillis = 0;
+        return;
+    }
+
+    bool wifiDown = (WiFi.status() != WL_CONNECTED);
+    bool mqttDown = !client.connected();
+
+    if (wifiDown && mqttDown) {
+        if (dualOutageStartMillis == 0) {
+            dualOutageStartMillis = millis();
+            Serial.println("WiFi and MQTT both down - starting outage timer");
+            return;
+        }
+
+        if (millis() - dualOutageStartMillis >= DUAL_OUTAGE_REBOOT_TIMEOUT_MS) {
+            Serial.println("WiFi+MQTT outage exceeded 60 seconds - rebooting");
+            delay(100);
+            ESP.restart();
+        }
+    } else {
+        dualOutageStartMillis = 0;
     }
 }
 
@@ -425,6 +500,8 @@ void wifiEventHandler(WiFiEvent_t event, WiFiEventInfo_t info) {
             break;
         case ARDUINO_EVENT_WIFI_STA_DISCONNECTED:
             Serial.println("WiFi disconnected - waiting for reconnection...");
+            Serial.print("WiFi disconnect reason code: ");
+            Serial.println(info.wifi_sta_disconnected.reason);
             if (client.connected()) {
                 client.disconnect();
             }
@@ -1009,11 +1086,14 @@ void loop() {
     checkWiFiConnection();
 
     // Handle MQTT
-    if (!client.connected()) {
+    if (client.connected()) {
+        client.loop();
+    } else if (!provisioningApMode && WiFi.status() == WL_CONNECTED) {
         reConnect();
-    } else {
-        client.loop();  // Only loop MQTT when connected
     }
+
+    // Reboot only if both WiFi and MQTT remain down for too long.
+    monitorCriticalConnectivity();
 
     // Check if the state has changed
     if (stateChanged) {

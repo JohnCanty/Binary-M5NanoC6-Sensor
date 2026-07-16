@@ -2,7 +2,6 @@
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-time.c \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/newlib/platform_include/stdio.h \
- /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/qio_qspi/include/sdkconfig.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/esp_system/include/esp_system.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/esp_common/include/esp_err.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/esp_common/include/esp_compiler.h \
@@ -109,6 +108,7 @@
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/lwip/lwip/src/include/lwip/apps/sntp_opts.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/lwip/lwip/src/include/lwip/opt.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/lwip/port/include/lwipopts.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/newlib/platform_include/sys/fcntl.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/newlib/platform_include/sys/ioctl.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/newlib/platform_include/sys/poll.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/esp_system/include/esp_task.h \
@@ -119,6 +119,7 @@
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/lwip/lwip/src/include/lwip/debug.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/lwip/lwip/src/include/lwip/arch.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/lwip/port/esp32xx/include/arch/cc.h \
+ /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/newlib/platform_include/ctype.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/lwip/lwip/src/include/lwip/prot/iana.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/lwip/lwip/src/include/lwip/ip_addr.h \
  /Users/johncanty/.platformio/packages/framework-arduinoespressif32-libs/esp32c6/include/lwip/lwip/src/include/lwip/def.h \
